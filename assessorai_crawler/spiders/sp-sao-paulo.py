@@ -40,7 +40,7 @@ class SpSaoPauloSpider(scrapy.Spider):
         """ Inicia a coleta fazendo a primeira requisição para a API de listagem. """
         params = {
             'draw': '1', 'start': '0', 'length': str(self.items_per_page_ajax),
-            'tipo': '0', 'somenteEmTramitacao': 'false',
+            'tipo': '1', 'somenteEmTramitacao': 'false',
             'order[0][column]': '1', 'order[0][dir]': 'desc',
             'search[value]': '', 'search[regex]': 'false',
         }
