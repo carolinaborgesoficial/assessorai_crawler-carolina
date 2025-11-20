@@ -50,13 +50,8 @@ class SpSaoPauloSpider(scrapy.Spider):
             params['autuacaoF'] = self.data_fim
 
         headers = {'X-Requested-With': 'XMLHttpRequest', 'Referer': 'https://splegisconsulta.saopaulo.sp.leg.br/Pesquisa/IndexProjeto'}
-        query_string = "&".join([f"{k}={v}" for k, v in params.items()])
-        yield scrapy.Request(
-            url=f"{self.ajax_url}?{query_string}",
-            headers=headers,
-            callback=self.parse,
-            meta={'params_template': params.copy()}
-)
+        yield scrapy.FormRequest(url=self.ajax_url, formdata=params, headers=headers, callback=self.parse, meta={'params_template': params.copy()})
+
 
     def parse(self, response, **kwargs):
         """ Processa a lista de proposições e dispara requisições para os PDFs. """
@@ -124,10 +119,4 @@ class SpSaoPauloSpider(scrapy.Spider):
             next_params['start'] = str(next_page_start_offset)
             
             self.logger.info(f"Buscando próxima página. Start: {next_page_start_offset}")
-            query_string = "&".join([f"{k}={v}" for k, v in next_params.items()])
-            return scrapy.Request(
-                url=f"{self.ajax_url}?{query_string}",
-                headers=response.request.headers,
-                callback=self.parse,
-                meta={'params_template': next_params}
-)
+            return scrapy.FormRequest(url=self.ajax_url, formdata=next_params, headers=response.request.headers, callback=self.parse, meta={'params_template': next_params})
